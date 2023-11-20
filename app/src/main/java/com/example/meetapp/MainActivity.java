@@ -2,12 +2,15 @@ package com.example.meetapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.meetapp.databinding.ActivityMainBinding;
 
+import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,17 +27,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 String name = binding.edtName.getText().toString();
-                String id = binding.edtMeetingId.getText().toString();
+                String id = "55555";
                 if(name.isEmpty()){
                     binding.edtName.setError("required");
                     binding.edtName.requestFocus();
                 }
-                else if (id.isEmpty()) {
-                    binding.edtMeetingId.setError("required");
-                    binding.edtMeetingId.requestFocus();
-                }
+
                 else if(isValid(name,id)){
-                        Toast.makeText(MainActivity.this, "valid", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "valid", Toast.LENGTH_SHORT).show();
+                    startMeeting(getRandomId(),name);
+
                     }else{
                         Toast.makeText(MainActivity.this, "not valid", Toast.LENGTH_SHORT).show();
                     }
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
                 if(name.isEmpty()){
                     binding.edtName.setError("required");
                     binding.edtName.requestFocus();
+                }  else if (id.isEmpty()) {
+                    binding.edtMeetingId.setError("required");
+                    binding.edtMeetingId.requestFocus();
                 }
                 else if(isValid(name,id)){
                     Toast.makeText(MainActivity.this, "valid", Toast.LENGTH_SHORT).show();
@@ -62,6 +67,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void startMeeting(String meetingID,String name){
+        String userId= UUID.randomUUID().toString();
+        Intent intent = new Intent(MainActivity.this, MeetActivity.class);
+        intent.putExtra("meet_id",meetingID);
+        intent.putExtra("name", name);
+        intent.putExtra("user_id",userId);
+        startActivity(intent);
+    }
+    public String getRandomId(){
+        StringBuilder id = new StringBuilder();
+        while (id.length()!=6){
+            int random = new Random().nextInt(10);
+            id.append(random);
+        }
+
+        return id.toString();
+    }
 
 
     private boolean isValid(String name, String id) {
