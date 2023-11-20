@@ -3,6 +3,7 @@ package com.example.meetapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -16,11 +17,16 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        sharedPreferences = getSharedPreferences("name_pref", MODE_PRIVATE);
+
+       binding.edtName.setText(sharedPreferences.getString("name",""));
 
         binding.btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if(isValid(name,id)){
                     Toast.makeText(MainActivity.this, "valid", Toast.LENGTH_SHORT).show();
+                    startMeeting(id,name);
                 }else {
                     Toast.makeText(MainActivity.this, "valid", Toast.LENGTH_SHORT).show();
 
@@ -68,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void startMeeting(String meetingID,String name){
+        sharedPreferences.edit().putString("name",name).apply();
         String userId= UUID.randomUUID().toString();
         Intent intent = new Intent(MainActivity.this, MeetActivity.class);
         intent.putExtra("meet_id",meetingID);
